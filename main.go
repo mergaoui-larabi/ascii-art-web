@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 
 	asciigenerator "ascii-art-web/ascii-generator"
 )
@@ -19,14 +18,19 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Fprintf(w, "howa error")
 	}
+	text := r.FormValue("ascii-input")
+	banner := r.FormValue("banner")
+	fmt.Println(text, banner)
 
-	result := asciigenerator.AsciiGenerator(r.FormValue("ascii-input"), "standard")
+	result := asciigenerator.AsciiGenerator(text, banner)
 
-	fmt.Println(result)
-	spl := strings.Split(result, "\r\n")
-	for i := 0; i < len(spl); i++ {
-		fmt.Fprintln(w, spl[i])
-	}
+	fmt.Print(result)
+	fmt.Fprintf(w, "%s", result)
+	// spl := strings.Split(result, "\r\n")
+	// // fmt.Fprintf(w, "hiya")
+	// for i := 0; i < len(spl); i++ {
+	// 	fmt.Fprintln(w, spl[i])
+	// }
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
@@ -37,8 +41,9 @@ func main() {
 	// serving the first html file
 	http.HandleFunc("/", rootHandler)
 
-	// http.HandleFunc("/get", getHandler)
+	// // http.HandleFunc("/get", getHandler)
 	http.HandleFunc("/ascii-art", postHandler)
 
 	log.Println(http.ListenAndServe(":8080", nil))
+
 }

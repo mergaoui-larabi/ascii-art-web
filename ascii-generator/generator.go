@@ -9,6 +9,9 @@ import (
 func AsciiGenerator(text string, banner string) string {
 	charset := CreateMap(banner)
 	for _, v := range text {
+		if v == 10 || v == 13 {
+			continue
+		}
 		if v < 32 || v > 126 {
 			fmt.Println("the input contains an inprintable character")
 			os.Exit(0)
@@ -17,8 +20,10 @@ func AsciiGenerator(text string, banner string) string {
 	if text == "" {
 		os.Exit(0)
 	}
+	res := ""
 	count := 0
 	slice_by_line := strings.Split(text, "\r\n")
+	fmt.Printf("%#v", slice_by_line)
 	for i := range slice_by_line {
 		if slice_by_line[i] == "" {
 			count++
@@ -26,18 +31,16 @@ func AsciiGenerator(text string, banner string) string {
 	}
 	if count == len(slice_by_line) {
 		for range count - 1 {
-			return "\n"
+			res += "\r\n"
 		}
-		os.Exit(0)
 	}
 	for i := range slice_by_line {
 		if slice_by_line[i] == "" {
-			return "\n"
+			res += "\r\n"
 		} else {
-			res := Compose(slice_by_line[i], charset)
-			return res
+			res += Compose(slice_by_line[i], charset)
 		}
 	}
 
-	return ""
+	return res
 }
